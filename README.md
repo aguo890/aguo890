@@ -1,8 +1,6 @@
 # Hi, I'm Aaron Guo 👋 
 
-### 🚀 Incoming Software/Machine Learning Engineer @ [xAI](https://x.ai)
-
-I like building things!
+I like building (and breaking) things!
 
 - 🎓 **Education:** Computer Science @ The George Washington University
 - 💡 **Currently Building:** [LineSight](https://github.com/aguo890/linesight) — AI-driven manufacturing intelligence.
