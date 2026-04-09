@@ -4,9 +4,7 @@ I like building (and breaking) things!
 
 - 🎓 **Education:** Computer Science @ The George Washington University
 - 💡 **Currently Building:** [LineSight](https://github.com/aguo890/linesight) — AI-driven manufacturing intelligence.
-- 🛠️ **Foundations:** Early background in security research and deep reverse engineering.
-- 🎯 **Focus:** Shipping robust, production-ready code that solves real business problems.
-
+- Incoming summer intern at xAI!
 ---
 
 ### 🏛️ Engineering Portfolio
