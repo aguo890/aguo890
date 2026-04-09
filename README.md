@@ -2,7 +2,7 @@
 
 ### 🚀 Incoming Software/Machine Learning Engineer @ [xAI](https://x.ai)
 
-I am a **Product-Minded Engineer** specializing in Site Reliability Engineering (SRE), scalable AI pipelines, and building mission-critical systems. My approach combines the rigor of infrastructure stability with the agility of product development.
+I like building things!
 
 - 🎓 **Education:** Computer Science @ The George Washington University
 - 💡 **Currently Building:** [LineSight](https://github.com/aguo890/linesight) — AI-driven manufacturing intelligence.
