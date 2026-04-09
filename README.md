@@ -57,6 +57,3 @@ I like building things!
 - **Portfolio:** [aguo890.github.io](https://aguo890.github.io/)
 
 ---
-<p align="center">
-  <i>"Efficiency is doing things right; effectiveness is doing the right things." — Peter Drucker</i>
-</p>
