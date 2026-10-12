@@ -20,28 +20,28 @@
 </picture>
 
 <p align="center">
-  <picture>
+  <a href="https://aguo890.github.io/#/projects/breaker-dashboard"><picture>
     <source media="(prefers-color-scheme: dark)" srcset="assets/cards/relay-fleet-telemetry-dark.svg">
     <source media="(prefers-color-scheme: light)" srcset="assets/cards/relay-fleet-telemetry-light.svg">
     <img alt="Relay Fleet Telemetry (SpaceXAI, internal): read-only telemetry for datacenter protective relays and breaker trip units, with drift detection and human-gated writes. Python, FastAPI, MySQL, Modbus, Docker, Ansible." src="assets/cards/relay-fleet-telemetry-dark.svg" width="49%">
-  </picture>
-  <picture>
+  </picture></a>
+  <a href="https://aguo890.github.io/#/projects/hmi-agent-sandbox"><picture>
     <source media="(prefers-color-scheme: dark)" srcset="assets/cards/ai-agent-hmi-workflow-dark.svg">
     <source media="(prefers-color-scheme: light)" srcset="assets/cards/ai-agent-hmi-workflow-light.svg">
     <img alt="AI-Agent HMI Workflow (SpaceXAI, internal): MCP server and headless build loop; agents write only to a sandbox gateway, views pass visual checks, and a human promotes them to production. Ignition 8.3, ISA-101, MCP, Playwright." src="assets/cards/ai-agent-hmi-workflow-dark.svg" width="49%">
-  </picture>
+  </picture></a>
 </p>
 <p align="center">
-  <picture>
+  <a href="https://aguo890.github.io/#/projects/datacenter-analytics"><picture>
     <source media="(prefers-color-scheme: dark)" srcset="assets/cards/plant-data-reliability-dark.svg">
     <source media="(prefers-color-scheme: light)" srcset="assets/cards/plant-data-reliability-light.svg">
     <img alt="Plant Data and Reliability Tools (SpaceXAI, internal): historian-to-analytics platform with SPC charts, OT disk-fill early warning, offsite SCADA backups, and planning tools; 6 internal tools deployed in one summer. Python, TimescaleDB, React, Docker." src="assets/cards/plant-data-reliability-dark.svg" width="49%">
-  </picture>
-  <picture>
+  </picture></a>
+  <a href="https://aguo890.github.io/#/projects/fabrik"><picture>
     <source media="(prefers-color-scheme: dark)" srcset="assets/cards/fabrik-dark.svg">
     <source media="(prefers-color-scheme: light)" srcset="assets/cards/fabrik-light.svg">
     <img alt="Fabrik (private, in production): ERP/MES for two apparel manufacturers, from buyer orders to hourly line output, with a TV andon; co-built with one other engineer, 100 pages and 5,300+ tests. Next.js, TypeScript, Prisma, PostgreSQL, three.js." src="assets/cards/fabrik-dark.svg" width="49%">
-  </picture>
+  </picture></a>
 </p>
 <p align="center">
   <a href="https://github.com/aguo890/Job-Automation-Suite"><picture>
@@ -68,19 +68,21 @@
   </picture></a>
 </p>
 
+<p align="center"><sub>Screenshots and full write-ups for every project are on <a href="https://aguo890.github.io/#projects">aguo890.github.io</a>.</sub></p>
+
 <details>
 <summary>Selected work as a table (text)</summary>
 
 | Project | What it is | Stack |
 | :--- | :--- | :--- |
-| **Relay Fleet Telemetry** <br> _SpaceXAI · internal_ | Read-only telemetry for datacenter protective relays and breaker trip units: high-concurrency polling, live config capture, drift detection against design, and an event log, with every write path human-gated. | `Python` `FastAPI` `MySQL` `Modbus` `Docker` `Ansible` |
-| **AI-Agent HMI Workflow** <br> _SpaceXAI · internal_ | MCP server and headless build loop for SCADA HMI development: agents write only to a sandbox gateway, views pass automated visual checks, and a human promotes them to production. | `Ignition 8.3` `ISA-101` `MCP` `Playwright` |
-| **Plant Data & Reliability Tools** <br> _SpaceXAI · internal_ | Historian-to-analytics platform with SPC charts, an OT server disk-fill early warning, offsite backups for SCADA archives, and planning tools. 6 internal tools deployed in one summer. | `Python` `TimescaleDB` `React` `Docker` |
-| **Fabrik** <br> _private · in production_ | ERP/MES for two apparel manufacturers: buyer orders → BOMs → work orders → ledgered inventory → hourly line output, plus a TV andon and a 3D floor view. Co-built with one other engineer; 100 pages and 5,300+ tests. | `Next.js` `TypeScript` `Prisma` `PostgreSQL` `three.js` |
-| **[Job Automation Suite](https://github.com/aguo890/Job-Automation-Suite)** | Scrapes Greenhouse, Lever, and Ashby job boards, ranks roles with a custom scoring algorithm, and generates tailored LaTeX résumés in one click. | `Python` `Streamlit` `GitHub Actions` `LaTeX` |
-| **[LineSight](https://github.com/aguo890/linesight)** | Manufacturing analytics SaaS. LLM-powered semantic ETL turns messy factory spreadsheets into dashboards without rigid templates. | `React 19` `FastAPI` `Celery` `PostgreSQL` |
-| **[LokumAI](https://github.com/aguo890/tax-os)** | Tax optimization for physicians, with an agentic assistant for multi-step tax reasoning and cited answers (RAG). | `TypeScript` `FastAPI` `MySQL` `Docker` |
-| **[Academic Test Facility](https://github.com/aguo890/capstone)** | Proctored testing platform deployed by the GWU CS department and used by 1,000+ students, with real-time spatial monitoring and RBAC. | `React` `FastAPI` `MySQL` `Docker` |
+| **[Relay Fleet Telemetry](https://aguo890.github.io/#/projects/breaker-dashboard)** <br> _SpaceXAI · internal_ | Read-only telemetry for datacenter protective relays and breaker trip units: high-concurrency polling, live config capture, drift detection against design, and an event log, with every write path human-gated. | `Python` `FastAPI` `MySQL` `Modbus` `Docker` `Ansible` |
+| **[AI-Agent HMI Workflow](https://aguo890.github.io/#/projects/hmi-agent-sandbox)** <br> _SpaceXAI · internal_ | MCP server and headless build loop for SCADA HMI development: agents write only to a sandbox gateway, views pass automated visual checks, and a human promotes them to production. | `Ignition 8.3` `ISA-101` `MCP` `Playwright` |
+| **[Plant Data & Reliability Tools](https://aguo890.github.io/#/projects/datacenter-analytics)** <br> _SpaceXAI · internal_ | Historian-to-analytics platform with SPC charts, an OT server disk-fill early warning, offsite backups for SCADA archives, and planning tools. 6 internal tools deployed in one summer. | `Python` `TimescaleDB` `React` `Docker` |
+| **[Fabrik](https://aguo890.github.io/#/projects/fabrik)** <br> _private · in production_ | ERP/MES for two apparel manufacturers: buyer orders → BOMs → work orders → ledgered inventory → hourly line output, plus a TV andon and a 3D floor view. Co-built with one other engineer; 100 pages and 5,300+ tests. | `Next.js` `TypeScript` `Prisma` `PostgreSQL` `three.js` |
+| **[Job Automation Suite](https://github.com/aguo890/Job-Automation-Suite)** <br> _[screenshots](https://aguo890.github.io/#/projects/job-automation-suite)_ | Scrapes Greenhouse, Lever, and Ashby job boards, ranks roles with a custom scoring algorithm, and generates tailored LaTeX résumés in one click. | `Python` `Streamlit` `GitHub Actions` `LaTeX` |
+| **[LineSight](https://github.com/aguo890/linesight)** <br> _[screenshots](https://aguo890.github.io/#/projects/linesight)_ | Manufacturing analytics SaaS. LLM-powered semantic ETL turns messy factory spreadsheets into dashboards without rigid templates. | `React 19` `FastAPI` `Celery` `PostgreSQL` |
+| **[LokumAI](https://github.com/aguo890/tax-os)** <br> _[screenshots](https://aguo890.github.io/#/projects/lokumai)_ | Tax optimization for physicians, with an agentic assistant for multi-step tax reasoning and cited answers (RAG). | `TypeScript` `FastAPI` `MySQL` `Docker` |
+| **[Academic Test Facility](https://github.com/aguo890/capstone)** <br> _[screenshots](https://aguo890.github.io/#/projects/academic-test-facility)_ | Proctored testing platform deployed by the GWU CS department and used by 1,000+ students, with real-time spatial monitoring and RBAC. | `React` `FastAPI` `MySQL` `Docker` |
 
 </details>
 
