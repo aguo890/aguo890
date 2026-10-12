@@ -1,4 +1,4 @@
-"""Technical stack as an exploded automation pyramid with chip bands and a languages rail."""
+"""Technical stack as a layered diagram with tool chips per layer and a languages column."""
 
 from __future__ import annotations
 
@@ -6,7 +6,7 @@ from .content import PYRAMID, RAILS, STACK, stack_count
 from .svgdoc import Doc, FontBook, Palette, num, step_keyframes
 
 W = 1200
-TOP = 58
+TOP = 14
 PYR_CX = 158
 BAND_X0, BAND_X1 = 336, 958
 RAIL_X = 988
@@ -20,11 +20,10 @@ def build(book: FontBook, pal: Palette) -> Doc:
     probe = Doc(book, pal, (W, 10), ("", ""))
     bands, height = _layout_bands(probe)
     doc = Doc(book, pal, (W, height), (
-        "Technical stack — automation pyramid",
-        f"Exploded automation pyramid from field and electrical (L0) up to AI and agents (L6), with all "
-        f"{stack_count()} stack items placed as chips on their layer, plus a languages rail."))
+        "Technical stack",
+        f"Layered stack diagram from field and electrical (L0) up to AI and agents (L6), with all "
+        f"{stack_count()} stack items on their layer, plus a languages column."))
     _styles(doc)
-    doc.add(doc.text(16, 24, "AUTOMATION PYRAMID  ·  L0 FIELD → L6 AI", "m4", 16, pal.mu, ls=1))
     for band in bands:
         _draw_band(doc, band)
     _pyramid(doc, bands)

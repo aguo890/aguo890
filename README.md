@@ -1,7 +1,7 @@
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="assets/hero-dark.svg">
   <source media="(prefers-color-scheme: light)" srcset="assets/hero-light.svg">
-  <img alt="Aaron Guo, Software Automation Controls Engineer. Animated control-room banner: status chips for SpaceXAI (full-time Oct 2026), GWU CS '26, and Fabrik (in production), plus a one-line diagram where feeder 3 trips, is acknowledged, and is restored." src="assets/hero-dark.svg" width="100%">
+  <img alt="Photo of Aaron Guo with his name and role, Software Automation Controls Engineer, and status chips for SpaceXAI (full-time Oct 2026), GWU CS '26, and Fabrik (in production). Beside it, an animated one-line electrical diagram where feeder 3 trips, is acknowledged, and is restored." src="assets/hero-dark.svg" width="100%">
 </picture>
 
 **Software Automation Controls Engineer.** I build the software layer of industrial control systems: equipment telemetry, operator HMIs, alarms, and plant data, plus the full-stack apps that operations teams run on.
@@ -9,14 +9,14 @@
 - **Role:** Software Automation Controls Engineer at **SpaceXAI** (full-time from October 2026), after a Summer 2026 controls engineering internship building monitoring, analytics, and reliability tools for AI datacenter control systems
 - **Education:** B.S. Computer Science, The George Washington University (2026)
 - **On the side:** **Fabrik**, a production ERP/MES that runs two apparel manufacturers
-- **How I work:** AI agents in the loop, with written rules, sandboxed writes, and verify-before-ship gates
+- **How I work:** I use AI coding agents every day, with clear rules and human review before anything ships
 
 <br>
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="assets/sections/selected-work-dark.svg">
   <source media="(prefers-color-scheme: light)" srcset="assets/sections/selected-work-light.svg">
-  <img alt="01 // Selected work" src="assets/sections/selected-work-dark.svg" width="100%">
+  <img alt="Selected work" src="assets/sections/selected-work-dark.svg" width="100%">
 </picture>
 
 <p align="center">
@@ -89,13 +89,13 @@
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="assets/sections/stack-dark.svg">
   <source media="(prefers-color-scheme: light)" srcset="assets/sections/stack-light.svg">
-  <img alt="02 // Technical stack" src="assets/sections/stack-dark.svg" width="100%">
+  <img alt="Technical stack" src="assets/sections/stack-dark.svg" width="100%">
 </picture>
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="assets/stack-dark.svg">
   <source media="(prefers-color-scheme: light)" srcset="assets/stack-light.svg">
-  <img alt="Technical stack as an exploded automation pyramid: L0 field and electrical, L1 industrial protocols, L2 control and supervisory, L3 data and backend, L4 applications and quality, L5 infra, cloud, and security, L6 AI and agents, plus a languages rail. The full list is in the text inventory below." src="assets/stack-dark.svg" width="100%">
+  <img alt="Technical stack diagram, layered from L0 field and electrical, L1 industrial protocols, L2 control and supervisory, L3 data and backend, L4 applications and quality, L5 infra, cloud, and security, up to L6 AI and agents, plus a languages column. The full list is in the text table below." src="assets/stack-dark.svg" width="100%">
 </picture>
 
 <details>
@@ -125,37 +125,37 @@
 <br>
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="assets/sections/telemetry-dark.svg">
-  <source media="(prefers-color-scheme: light)" srcset="assets/sections/telemetry-light.svg">
-  <img alt="03 // GitHub telemetry" src="assets/sections/telemetry-dark.svg" width="100%">
+  <source media="(prefers-color-scheme: dark)" srcset="assets/sections/github-stats-dark.svg">
+  <source media="(prefers-color-scheme: light)" srcset="assets/sections/github-stats-light.svg">
+  <img alt="GitHub stats" src="assets/sections/github-stats-dark.svg" width="100%">
 </picture>
 
 <p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="https://github-readme-stats.vercel.app/api?username=aguo890&show_icons=true&include_all_commits=true&count_private=true&hide_border=true&bg_color=00000000&title_color=E6EDF3&text_color=8B949E&icon_color=4CC9F0&ring_color=4CC9F0">
     <source media="(prefers-color-scheme: light)" srcset="https://github-readme-stats.vercel.app/api?username=aguo890&show_icons=true&include_all_commits=true&count_private=true&hide_border=true&bg_color=00000000&title_color=1F2328&text_color=59636E&icon_color=0A7AA8&ring_color=0A7AA8">
-    <img alt="GitHub stats for aguo890" src="https://github-readme-stats.vercel.app/api?username=aguo890&show_icons=true&include_all_commits=true&count_private=true&hide_border=true&bg_color=00000000&title_color=E6EDF3&text_color=8B949E&icon_color=4CC9F0&ring_color=4CC9F0" width="49%">
+    <img alt="GitHub stats for aguo890" src="https://github-readme-stats.vercel.app/api?username=aguo890&show_icons=true&include_all_commits=true&count_private=true&hide_border=true&bg_color=00000000&title_color=E6EDF3&text_color=8B949E&icon_color=4CC9F0&ring_color=4CC9F0" width="59%">
   </picture>
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="https://github-readme-stats.vercel.app/api/top-langs/?username=aguo890&layout=compact&langs_count=8&hide_border=true&bg_color=00000000&title_color=E6EDF3&text_color=8B949E">
     <source media="(prefers-color-scheme: light)" srcset="https://github-readme-stats.vercel.app/api/top-langs/?username=aguo890&layout=compact&langs_count=8&hide_border=true&bg_color=00000000&title_color=1F2328&text_color=59636E">
-    <img alt="Top languages for aguo890" src="https://github-readme-stats.vercel.app/api/top-langs/?username=aguo890&layout=compact&langs_count=8&hide_border=true&bg_color=00000000&title_color=E6EDF3&text_color=8B949E" width="49%">
+    <img alt="Top languages for aguo890" src="https://github-readme-stats.vercel.app/api/top-langs/?username=aguo890&layout=compact&langs_count=8&hide_border=true&bg_color=00000000&title_color=E6EDF3&text_color=8B949E" width="38%">
   </picture>
 </p>
 <p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="https://github-readme-streak-stats.herokuapp.com/?user=aguo890&hide_border=true&background=00000000&stroke=30363D&ring=4CC9F0&fire=FFB627&currStreakNum=E6EDF3&sideNums=E6EDF3&currStreakLabel=4CC9F0&sideLabels=8B949E&dates=8B949E">
     <source media="(prefers-color-scheme: light)" srcset="https://github-readme-streak-stats.herokuapp.com/?user=aguo890&hide_border=true&background=00000000&stroke=D1D9E0&ring=0A7AA8&fire=9A6700&currStreakNum=1F2328&sideNums=1F2328&currStreakLabel=0A7AA8&sideLabels=59636E&dates=59636E">
-    <img alt="GitHub contribution streak for aguo890" src="https://github-readme-streak-stats.herokuapp.com/?user=aguo890&hide_border=true&background=00000000&stroke=30363D&ring=4CC9F0&fire=FFB627&currStreakNum=E6EDF3&sideNums=E6EDF3&currStreakLabel=4CC9F0&sideLabels=8B949E&dates=8B949E" width="60%">
+    <img alt="GitHub contribution streak for aguo890" src="https://github-readme-streak-stats.herokuapp.com/?user=aguo890&hide_border=true&background=00000000&stroke=30363D&ring=4CC9F0&fire=FFB627&currStreakNum=E6EDF3&sideNums=E6EDF3&currStreakLabel=4CC9F0&sideLabels=8B949E&dates=8B949E" width="62%">
   </picture>
 </p>
 
 <br>
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="assets/sections/connect-dark.svg">
-  <source media="(prefers-color-scheme: light)" srcset="assets/sections/connect-light.svg">
-  <img alt="04 // Connect" src="assets/sections/connect-dark.svg" width="100%">
+  <source media="(prefers-color-scheme: dark)" srcset="assets/sections/contact-dark.svg">
+  <source media="(prefers-color-scheme: light)" srcset="assets/sections/contact-light.svg">
+  <img alt="Contact" src="assets/sections/contact-dark.svg" width="100%">
 </picture>
 
 <p align="center">
@@ -178,9 +178,3 @@
 <p align="center">
   <sub><a href="https://www.linkedin.com/in/guo-aaron/">linkedin.com/in/guo-aaron</a> · <a href="mailto:compsci.aaron.guo@gmail.com">compsci.aaron.guo@gmail.com</a> · <a href="https://aguo890.github.io/">aguo890.github.io</a></sub>
 </p>
-
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="assets/footer-dark.svg">
-  <source media="(prefers-color-scheme: light)" srcset="assets/footer-light.svg">
-  <img alt="End of line: animated heartbeat footer" src="assets/footer-dark.svg" width="100%">
-</picture>

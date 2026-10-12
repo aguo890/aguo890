@@ -1,9 +1,13 @@
-"""Hero banner: operator identity on the left, an animated one-line HMI on the right."""
+"""Hero banner: photo, name, and role on the left; an animated one-line diagram on the right."""
 
 from __future__ import annotations
 
+import base64
+import io
 import math
 import random
+from functools import lru_cache
+from pathlib import Path
 
 from .svgdoc import Doc, num, step_keyframes
 
@@ -11,12 +15,17 @@ W, H = 1200, 440
 CYCLE_S = 12
 TRIP, ACK, RESTORE, CLEAR = 25, 50, 80, 94  # percent of the cycle
 COL_X, COL_W = 40, 540
-PANEL = (620, 60, 1176, 420)
+PANEL = (620, 28, 1176, 416)
+AVATAR_SRC = Path(__file__).resolve().parents[2] / "assets" / "src" / "avatar.jpg"
+AVATAR_PX, AVATAR_QUALITY = 176, 82  # about 2x the displayed size
+AV_CX, AV_CY, AV_R, RING_R = COL_X + 44, 78, 44, 51
+NAME_Y, ROLE_Y, TAGLINE_Y = 226, 274, 310
+TREND_LABEL_Y, TREND_BOTTOM, TREND_STEP = 366, 416, 6
 SX = 895  # source column x
 FEEDERS = [730, 840, 950, 1060]
 TRIP_FEEDER = 2  # index of FDR 3
-BUS_Y, BRK_Y, LOAD_Y = 268, 300, 352
-TREND_TOP, TREND_BOTTOM = 392, 420
+UTIL_CY, MAIN_Y, XF_CY = 112, 144, (192, 210)
+BUS_Y, BRK_Y, LOAD_Y, LABEL_Y = 246, 282, 338, 380
 NAME, ROLE = "AARON GUO", "Software Automation Controls Engineer"
 TAGLINE = "telemetry · operator HMIs · alarms · plant data"
 CHIPS = [("cy", "SpaceXAI · full-time Oct 2026"), ("mu", "GWU CS '26"), ("gn", "Fabrik · in production")]
@@ -24,7 +33,8 @@ CHIPS = [("cy", "SpaceXAI · full-time Oct 2026"), ("mu", "GWU CS '26"), ("gn", 
 
 def build(doc: Doc) -> None:
     _styles(doc)
-    _top_bar(doc)
+    _avatar(doc)
+    _chips(doc, AV_CX + RING_R + 17, AV_CY)
     _identity(doc)
     _trend(doc)
     _panel(doc)
@@ -32,7 +42,6 @@ def build(doc: Doc) -> None:
 
 def _styles(doc: Doc) -> None:
     windows = {
-        "w-ok": [(0, "opacity:1"), (TRIP, "opacity:0"), (CLEAR, "opacity:1")],
         "w-norm": [(0, "opacity:1"), (TRIP, "opacity:0"), (RESTORE, "opacity:1")],
         "w-dead": [(0, "opacity:0"), (TRIP, "opacity:1"), (RESTORE, "opacity:0")],
         "w-trip": [(0, "opacity:0"), (TRIP, "opacity:1"), (ACK, "opacity:0")],
@@ -41,14 +50,16 @@ def _styles(doc: Doc) -> None:
     }
     css = []
     for name, stops in windows.items():
-        base = stops[0][1]
         css.append(step_keyframes(name, stops))
-        css.append(f".{name}{{{base};animation:{name} {CYCLE_S}s linear infinite}}")
+        css.append(f".{name}{{{stops[0][1]};animation:{name} {CYCLE_S}s linear infinite}}")
     css.append(
         ".blink{animation:blink .5s steps(1) infinite}@keyframes blink{50%{opacity:.18}}"
         ".flow{stroke-dasharray:6 10;animation:flow .8s linear infinite}"
         "@keyframes flow{to{stroke-dashoffset:-16}}"
         ".pulse{animation:pulse 2.4s ease-in-out infinite}@keyframes pulse{50%{opacity:.3}}"
+        ".spin{transform-box:view-box;transform-origin:"
+        f"{AV_CX}px {AV_CY}px;animation:spin 9s linear infinite}}"
+        "@keyframes spin{to{transform:rotate(360deg)}}"
         ".halo{opacity:0;transform-box:fill-box;transform-origin:center;"
         f"animation:halo {CYCLE_S}s ease-out infinite}}"
         f"@keyframes halo{{0%,{TRIP - 0.01}%{{opacity:0;transform:scale(.6)}}"
@@ -61,75 +72,83 @@ def _styles(doc: Doc) -> None:
     doc.style("hero", "".join(css))
 
 
-def _top_bar(doc: Doc) -> None:
-    p = doc.pal
-    left = COL_X - 12
-    doc.add(
-        f'<rect x="{left}" y="18" width="11" height="11" transform="rotate(45 {left + 5.5} 23.5)" '
-        f'fill="none" stroke="{p.cy}" stroke-width="1.6"/>',
-        doc.text(left + 22, 29, "AG-HMI", "m7", 16, p.tx, ls=2),
-        doc.text(left + 22 + doc.tw("AG-HMI", "m7", 16, 2) + 16, 29, "/  OPERATOR PROFILE", "m4", 16, p.mu, ls=1),
-    )
-    right = PANEL[2]
-    online_w = doc.tw("ONLINE", "m7", 16, 1.5)
-    led_x = right - online_w - 14
-    sys_x = led_x - 12
-    doc.add(
-        doc.text(right, 29, "ONLINE", "m7", 16, p.tx, "end", 1.5),
-        f'<circle class="pulse" cx="{num(led_x)}" cy="23.5" r="4.5" fill="{p.gn}"{doc.glow(3)}/>',
-        doc.text(sys_x, 29, "SYS", "m4", 16, p.mu, "end", 1.5),
-    )
-    _alarm_counter(doc, sys_x - doc.tw("SYS", "m4", 16, 1.5) - 22)
-    doc.add(_fade_line(doc, "topline", 0, W, 46))
+@lru_cache(maxsize=1)
+def _avatar_b64() -> str:
+    from PIL import Image  # only the hero needs Pillow
+
+    with Image.open(AVATAR_SRC) as src:
+        img = src.convert("RGB").resize((AVATAR_PX, AVATAR_PX), Image.Resampling.LANCZOS)
+    buf = io.BytesIO()
+    img.save(buf, "JPEG", quality=AVATAR_QUALITY, optimize=True)
+    return base64.b64encode(buf.getvalue()).decode("ascii")
 
 
-def _alarm_counter(doc: Doc, right: float) -> None:
+def _avatar(doc: Doc) -> None:
     p = doc.pal
-    w = doc.tw("ALM 0", "m7", 16, 1) + 22
-    x = right - w
-    box = f'<rect x="{num(x)}" y="11" width="{num(w)}" height="25" rx="3" '
-    mid = x + w / 2
+    x, y, d = AV_CX - AV_R, AV_CY - AV_R, 2 * AV_R
+    circ = 2 * math.pi * RING_R
+    dash = f"{num(circ * 0.25)} {num(circ * 0.2)} {num(circ * 0.025)} {num(circ * 0.525)}"
+    arc = f'cx="{AV_CX}" cy="{AV_CY}" r="{RING_R}" fill="none" stroke="{p.cy}" stroke-dasharray="{dash}"'
+    halo = f'<circle {arc} stroke-width="6" stroke-opacity=".16"/>' if p.glow else ""
+    dot = (AV_CX + RING_R * math.cos(math.pi / 4), AV_CY + RING_R * math.sin(math.pi / 4))
+    doc.define("avclip", f'<clipPath id="avclip"><circle cx="{AV_CX}" cy="{AV_CY}" r="{AV_R}"/></clipPath>')
     doc.add(
-        f'<g class="w-ok">{box}fill="none" {doc.hair()}/>'
-        f'{doc.text(mid, 29, "ALM 0", "m7", 16, p.mu, "middle", 1)}</g>',
-        f'<g class="w-trip"><g class="blink">{box}fill="{p.rd}" fill-opacity=".16" stroke="{p.rd}"/>'
-        f'{doc.text(mid, 29, "ALM 1", "m7", 16, p.rd, "middle", 1)}</g></g>',
-        f'<g class="w-ack">{box}fill="{p.am}" fill-opacity=".12" stroke="{p.am}"/>'
-        f'{doc.text(mid, 29, "ALM 1", "m7", 16, p.am, "middle", 1)}</g>',
-        f'<g class="w-rst">{box}fill="none" {doc.hair()}/>'
-        f'{doc.text(mid, 29, "ALM 0", "m7", 16, p.mu, "middle", 1)}</g>',
+        f'<image x="{x}" y="{y}" width="{d}" height="{d}" preserveAspectRatio="xMidYMid slice" '
+        f'clip-path="url(#avclip)" href="data:image/jpeg;base64,{_avatar_b64()}"/>',
+        f'<circle cx="{AV_CX}" cy="{AV_CY}" r="{AV_R}" fill="none" {doc.hair()}/>',
+        f'<circle cx="{AV_CX}" cy="{AV_CY}" r="{RING_R}" fill="none" {doc.hair()}/>',
+        f'<g class="spin">{halo}<circle {arc} stroke-width="2.2" stroke-linecap="round"/></g>',
+        f'<circle cx="{num(dot[0])}" cy="{num(dot[1])}" r="6.5" fill="{p.gn}" stroke="{p.page}" '
+        f'stroke-width="3"/>',
     )
 
 
-def _fade_line(doc: Doc, gid: str, x0: float, x1: float, y: float) -> str:
+def _chips(doc: Doc, x0: float, cy: float) -> None:
     p = doc.pal
-    doc.define(gid, (
-        f'<linearGradient id="{gid}" gradientUnits="userSpaceOnUse" x1="{x0}" y1="0" x2="{x1}" y2="0">'
-        f'<stop offset="0" stop-color="{p.hair}" stop-opacity="0"/>'
-        f'<stop offset=".08" stop-color="{p.hair}" stop-opacity="{p.hair_op}"/>'
-        f'<stop offset=".92" stop-color="{p.hair}" stop-opacity="{p.hair_op}"/>'
-        f'<stop offset="1" stop-color="{p.hair}" stop-opacity="0"/></linearGradient>'))
-    return f'<path d="M{num(x0)} {num(y)}H{num(x1)}" stroke="url(#{gid})" stroke-width="1"/>'
+    gap, h = 10, 30
+    rows: list[list[tuple[str, str, float]]] = [[]]
+    x = x0
+    for color, label in CHIPS:
+        w = doc.tw(label, "m4", 16) + 38
+        if rows[-1] and x + w > COL_X + COL_W:
+            rows.append([])
+            x = x0
+        rows[-1].append((color, label, w))
+        x += w + gap
+    top = cy - (len(rows) * h + (len(rows) - 1) * gap) / 2
+    for r, row in enumerate(rows):
+        x, y = x0, top + r * (h + gap)
+        for color, label, w in row:
+            _chip(doc, (x, y, w, h), color, label)
+            x += w + gap
+
+
+def _chip(doc: Doc, box: tuple[float, float, float, float], color: str, label: str) -> None:
+    p = doc.pal
+    x, y, w, h = box
+    led = getattr(p, color)
+    pulse = ' class="pulse"' if color != "mu" else ""
+    glow = doc.glow(2.5) if color != "mu" else ""
+    doc.add(
+        f'<rect x="{num(x)}" y="{num(y)}" width="{num(w)}" height="{h}" rx="4" {doc.panel(1.6)}/>',
+        f'<circle{pulse} cx="{num(x + 15)}" cy="{num(y + h / 2)}" r="4" fill="{led}"{glow}/>',
+        doc.text(x + 28, y + 20.5, label, "m4", 16, p.tx),
+    )
 
 
 def _identity(doc: Doc) -> None:
     p = doc.pal
     name_size = min(96.0, COL_W / doc.tw(NAME, "id", 1, -0.01))
     role_size = min(28.0, COL_W / doc.tw(ROLE, "i6", 1))
-    doc.add(
-        f'<rect x="{COL_X}" y="76" width="3" height="16" fill="{p.am}"/>',
-        doc.text(COL_X + 12, 90, "OPERATOR  ·  CONTROLS + SOFTWARE", "m4", 16, p.mu, ls=2),
-        doc.text(COL_X - 3, 172, NAME, "id", round(name_size, 1), p.tx, ls=-round(name_size * 0.01, 2)),
-    )
+    doc.add(doc.text(COL_X - 3, NAME_Y, NAME, "id", round(name_size, 1), p.tx, ls=-round(name_size * 0.01, 2)))
     _role_reveal(doc, role_size)
-    doc.add(doc.text(COL_X, 252, TAGLINE, "m4", 16, p.mu))
-    _chips(doc, 274)
+    doc.add(doc.text(COL_X, TAGLINE_Y, TAGLINE, "m4", 16, p.mu))
 
 
 def _role_reveal(doc: Doc, size: float) -> None:
     p = doc.pal
     width = doc.tw(ROLE, "i6", size)
-    doc.define("roleclip", f'<clipPath id="roleclip"><rect class="reveal" x="{COL_X - 2}" y="190" '
+    doc.define("roleclip", f'<clipPath id="roleclip"><rect class="reveal" x="{COL_X - 2}" y="{ROLE_Y - 30}" '
                            f'width="{num(width + 8)}" height="40"/></clipPath>')
     doc.style("reveal", (
         ".reveal{transform-box:fill-box;transform-origin:0 0;"
@@ -140,35 +159,18 @@ def _role_reveal(doc: Doc, size: float) -> None:
         f"@keyframes caret{{from{{transform:translateX(0)}}to{{transform:translateX({num(width + 6)}px)}}}}"
         "@keyframes cblink{50%{opacity:0}}"))
     doc.add(
-        f'<g clip-path="url(#roleclip)">{doc.text(COL_X, 220, ROLE, "i6", round(size, 1), p.tx)}</g>',
-        f'<rect class="caret" x="{COL_X}" y="198" width="3" height="28" fill="{p.cy}"{doc.glow(2.5)}/>',
+        f'<g clip-path="url(#roleclip)">{doc.text(COL_X, ROLE_Y, ROLE, "i6", round(size, 1), p.tx)}</g>',
+        f'<rect class="caret" x="{COL_X}" y="{ROLE_Y - 22}" width="3" height="28" fill="{p.cy}"{doc.glow(2.5)}/>',
     )
-
-
-def _chips(doc: Doc, top: float) -> None:
-    p = doc.pal
-    x, y, gap, h = COL_X, top, 10, 30
-    for color, label in CHIPS:
-        w = doc.tw(label, "m4", 16) + 38
-        if x + w > COL_X + COL_W:
-            x, y = COL_X, y + h + gap
-        led = getattr(p, color)
-        pulse = ' class="pulse"' if color != "mu" else ""
-        glow = doc.glow(2.5) if color != "mu" else ""
-        doc.add(
-            f'<rect x="{num(x)}" y="{num(y)}" width="{num(w)}" height="{h}" rx="4" {doc.panel(1.6)}/>',
-            f'<circle{pulse} cx="{num(x + 15)}" cy="{num(y + h / 2)}" r="4" fill="{led}"{glow}/>',
-            doc.text(x + 28, y + 20.5, label, "m4", 16, p.tx),
-        )
-        x += w + gap
 
 
 def _trend_values() -> list[float]:
     rnd = random.Random(7)
+    dip_on, dip_off = COL_W * TRIP / 100 - 15, COL_W * RESTORE / 100 - 15
     out = []
-    for i in range(0, COL_W + 1, 6):
+    for i in range(0, COL_W + 1, TREND_STEP):
         v = 0.6 + 0.07 * math.sin(i / 31) + 0.05 * math.sin(i / 11 + 1.3) + rnd.uniform(-0.035, 0.035)
-        dip = _smooth((i - 120) / 30) * (1 - _smooth((i - 420) / 30))
+        dip = _smooth((i - dip_on) / 30) * (1 - _smooth((i - dip_off) / 30))
         out.append(v * (1 - 0.45 * dip))
     out[-1] = out[0]
     return out
@@ -182,23 +184,21 @@ def _smooth(t: float) -> float:
 def _trend(doc: Doc) -> None:
     p = doc.pal
     vals = _trend_values()
-    pts = [(COL_X + i * 6 + k * COL_W, TREND_BOTTOM - 2 - v * 40) for k in range(2) for i, v in enumerate(vals)]
+    pts = [(COL_X + i * TREND_STEP + k * COL_W, TREND_BOTTOM - 2 - v * 40)
+           for k in range(2) for i, v in enumerate(vals)]
     line = "M" + " L".join(f"{num(x)} {num(y)}" for x, y in pts)
     area = f"{line} L{num(pts[-1][0])} {TREND_BOTTOM} L{num(pts[0][0])} {TREND_BOTTOM}Z"
-    x0, x1 = COL_X, COL_X + COL_W
+    x0, x1, top = COL_X, COL_X + COL_W, TREND_LABEL_Y + 6
     doc.define("trendfade", (
         f'<linearGradient id="tfg" gradientUnits="userSpaceOnUse" x1="{x0}" y1="0" x2="{x1}" y2="0">'
         '<stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".18" stop-color="#fff"/>'
         '<stop offset="1" stop-color="#fff"/></linearGradient>'
-        f'<mask id="tmask" maskUnits="userSpaceOnUse" x="{x0}" y="{TREND_TOP - 20}" width="{COL_W}" height="60">'
-        f'<rect x="{x0}" y="{TREND_TOP - 20}" width="{COL_W}" height="60" fill="url(#tfg)"/></mask>'
+        f'<mask id="tmask" maskUnits="userSpaceOnUse" x="{x0}" y="{top}" width="{COL_W}" height="{TREND_BOTTOM - top}">'
+        f'<rect x="{x0}" y="{top}" width="{COL_W}" height="{TREND_BOTTOM - top}" fill="url(#tfg)"/></mask>'
         f'<linearGradient id="tarea" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="{p.cy}" '
         f'stop-opacity=".22"/><stop offset="1" stop-color="{p.cy}" stop-opacity="0"/></linearGradient>'))
     doc.add(
-        doc.text(COL_X, 378, "TREND  ·  BUS LOAD", "m4", 16, p.mu, ls=1),
-        f'<circle class="pulse" cx="{num(x1 - doc.tw("LIVE", "m4", 16, 1) - 12)}" cy="372.5" r="3.5" '
-        f'fill="{p.cy}"{doc.glow(2.5)}/>',
-        doc.text(x1, 378, "LIVE", "m4", 16, p.mu, "end", 1),
+        doc.text(COL_X, TREND_LABEL_Y, "BUS LOAD", "m4", 16, p.mu, ls=1),
         f'<path d="M{x0} {TREND_BOTTOM}H{x1}" {doc.hair()}/>',
         f'<g mask="url(#tmask)"><g class="trend"><path d="{area}" fill="url(#tarea)"/>'
         f'<path d="{line}" fill="none" stroke="{p.cy}" stroke-width="1.8" stroke-linejoin="round"/></g></g>',
@@ -228,7 +228,7 @@ def _panel(doc: Doc) -> None:
         f'<path d="M{x0 + 16} {y0 + 46}H{x1 - 16}" {doc.hair()}/>',
     )
     _alarm_banner(doc, x1 - 18, y0 + 11)
-    _legend(doc, x1 - 20, y0 + 76)
+    _legend(doc, x1 - 20, y0 + 80)
     _one_line(doc)
 
 
@@ -243,7 +243,6 @@ def _alarm_banner(doc: Doc, right: float, top: float) -> None:
     p = doc.pal
     h = 26
     states = [
-        ("w-ok", "●  NO ACTIVE ALARMS", "m4", p.mu, None),
         ("w-trip", "▲  FDR 3 TRIP", "m7", p.rd, p.rd),
         ("w-ack", "■  FDR 3 TRIP · ACK", "m7", p.am, p.am),
         ("w-rst", "✓  FDR 3 RESTORED", "m4", p.gn, None),
@@ -255,8 +254,7 @@ def _alarm_banner(doc: Doc, right: float, top: float) -> None:
         if box:
             inner = (f'<rect x="{num(x)}" y="{top}" width="{num(tw + 24)}" height="{h}" rx="3" fill="{box}" '
                      f'fill-opacity=".14" stroke="{box}"/>')
-        tx = x + (12 if box else 0)
-        inner += doc.text(tx, top + 18.5, label, font, 16, color, ls=0.5)
+        inner += doc.text(x + (12 if box else 0), top + 18.5, label, font, 16, color, ls=0.5)
         wrapped = f'<g class="blink">{inner}</g>' if cls == "w-trip" else inner
         doc.add(f'<g class="{cls}">{wrapped}</g>')
 
@@ -277,7 +275,8 @@ def _legend(doc: Doc, right: float, top: float) -> None:
 def _one_line(doc: Doc) -> None:
     p = doc.pal
     cond = f'stroke="{p.dim}" stroke-width="2" fill="none"'
-    trunk = f"M{SX} 153V170 M{SX} 192V206 M{SX} 246V{BUS_Y}"
+    trunk = (f"M{SX} {UTIL_CY + 13}V{MAIN_Y} M{SX} {MAIN_Y + 22}V{XF_CY[0] - 11} "
+             f"M{SX} {XF_CY[1] + 11}V{BUS_Y}")
     feeders_up = " ".join(f"M{x} {BUS_Y}V{BRK_Y}" for x in FEEDERS)
     feeders_dn = [f"M{x} {BRK_Y + 22}V{LOAD_Y}" for x in FEEDERS]
     doc.add(
@@ -306,15 +305,16 @@ def _flow(doc: Doc, d: str, cls: str) -> None:
 def _source_column(doc: Doc) -> None:
     p = doc.pal
     lx = SX - 26
+    ring = f'fill="none" stroke="{p.tx}" stroke-width="1.8"'
     doc.add(
-        f'<circle cx="{SX}" cy="140" r="13" fill="none" stroke="{p.tx}" stroke-width="1.8"/>',
-        f'<path d="M{SX - 7} 140c2.4-5 4.6-5 7 0s4.6 5 7 0" fill="none" stroke="{p.tx}" stroke-width="1.6"/>',
-        doc.text(lx, 145, "UTILITY", "m4", 16, p.mu, "end"),
-        f'<rect x="{SX - 11}" y="170" width="22" height="22" rx="2" fill="{p.mu}"/>',
-        doc.text(lx, 187, "MAIN · MV SWGR", "m4", 16, p.mu, "end"),
-        f'<circle cx="{SX}" cy="217" r="11" fill="none" stroke="{p.tx}" stroke-width="1.8"/>',
-        f'<circle cx="{SX}" cy="235" r="11" fill="none" stroke="{p.tx}" stroke-width="1.8"/>',
-        doc.text(lx, 231, "XFMR-1", "m4", 16, p.mu, "end"),
+        f'<circle cx="{SX}" cy="{UTIL_CY}" r="13" {ring}/>',
+        f'<path d="M{SX - 7} {UTIL_CY}c2.4-5 4.6-5 7 0s4.6 5 7 0" fill="none" stroke="{p.tx}" stroke-width="1.6"/>',
+        doc.text(lx, UTIL_CY + 5, "UTILITY", "m4", 16, p.mu, "end"),
+        f'<rect x="{SX - 11}" y="{MAIN_Y}" width="22" height="22" rx="2" fill="{p.mu}"/>',
+        doc.text(lx, MAIN_Y + 17, "MAIN · MV SWGR", "m4", 16, p.mu, "end"),
+        f'<circle cx="{SX}" cy="{XF_CY[0]}" r="11" {ring}/>',
+        f'<circle cx="{SX}" cy="{XF_CY[1]}" r="11" {ring}/>',
+        doc.text(lx, sum(XF_CY) / 2 + 5, "XFMR-1", "m4", 16, p.mu, "end"),
     )
 
 
@@ -327,19 +327,19 @@ def _feeder(doc: Doc, i: int, x: float) -> None:
         doc.add(
             f'<rect {brk} fill="{p.mu}"/>',
             f'<path d="{load}" fill="{p.mu}"/>',
-            doc.text(x, 392, label, "m4", 16, p.tx, "middle"),
+            doc.text(x, LABEL_Y, label, "m4", 16, p.tx, "middle"),
         )
         return
     doc.add(
         f'<g class="w-norm"><rect {brk} fill="{p.mu}"/><path d="{load}" fill="{p.mu}"/>'
-        f'{doc.text(x, 392, label, "m4", 16, p.tx, "middle")}</g>',
+        f'{doc.text(x, LABEL_Y, label, "m4", 16, p.tx, "middle")}</g>',
         f'<g class="w-dead"><path d="{load}" fill="none" stroke="{p.faint}" stroke-width="1.5"/></g>',
         f'<rect class="halo" x="{x - 15}" y="{BRK_Y - 4}" width="30" height="30" rx="4" fill="none" '
         f'stroke="{p.rd}" stroke-width="2"/>',
         f'<g class="w-trip"><g class="blink"><rect {brk} fill="{p.rd}" fill-opacity=".2" stroke="{p.rd}" '
-        f'stroke-width="2.2"{doc.glow(3)}/>{doc.text(x, 392, label, "m7", 16, p.rd, "middle")}</g>'
+        f'stroke-width="2.2"{doc.glow(3)}/>{doc.text(x, LABEL_Y, label, "m7", 16, p.rd, "middle")}</g>'
         f'{doc.text(x + 18, BRK_Y + 17, "TRIP", "m7", 16, p.rd)}</g>',
         f'<g class="w-ack"><rect {brk} fill="none" stroke="{p.am}" stroke-width="2.2"/>'
-        f'{doc.text(x, 392, label, "m7", 16, p.am, "middle")}'
+        f'{doc.text(x, LABEL_Y, label, "m7", 16, p.am, "middle")}'
         f'{doc.text(x + 18, BRK_Y + 17, "ACK", "m7", 16, p.am)}</g>',
     )

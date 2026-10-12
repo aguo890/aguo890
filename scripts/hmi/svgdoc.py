@@ -32,6 +32,7 @@ REDUCED_MOTION_CSS = (
 @dataclass(frozen=True)
 class Palette:
     name: str
+    page: str
     tx: str
     mu: str
     dim: str
@@ -48,12 +49,12 @@ class Palette:
 
 
 DARK = Palette(
-    name="dark", tx="#E6EDF3", mu="#8B949E", dim="#6E7681", faint="#484F58",
+    name="dark", page="#0D1117", tx="#E6EDF3", mu="#8B949E", dim="#6E7681", faint="#484F58",
     hair="#8B949E", hair_op=0.32, panel="#C9D1D9", panel_op=0.035,
     am="#FFB627", cy="#4CC9F0", rd="#F85149", gn="#3FB950", glow=True,
 )
 LIGHT = Palette(
-    name="light", tx="#1F2328", mu="#59636E", dim="#818B98", faint="#AFB8C1",
+    name="light", page="#FFFFFF", tx="#1F2328", mu="#59636E", dim="#818B98", faint="#AFB8C1",
     hair="#59636E", hair_op=0.28, panel="#1F2328", panel_op=0.03,
     am="#9A6700", cy="#0A7AA8", rd="#CF222E", gn="#1A7F37", glow=False,
 )

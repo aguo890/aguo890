@@ -10,7 +10,9 @@ DIR must contain the OFL-licensed source fonts:
     JetBrainsMono-Regular.ttf, JetBrainsMono-Bold.ttf
         (JetBrains Mono 2.304, https://github.com/JetBrains/JetBrainsMono/releases, fonts/ttf/)
 
-Requires: fonttools, brotli. Each SVG embeds WOFF2 subsets of only the glyphs it uses.
+The hero photo comes from assets/src/avatar.jpg (downscaled and re-encoded as JPEG at build time).
+
+Requires: fonttools, brotli, Pillow. Each SVG embeds WOFF2 subsets of only the glyphs it uses.
 """
 
 from __future__ import annotations
@@ -36,9 +38,9 @@ Builder = Callable[[FontBook, Palette], Doc]
 
 
 def jobs() -> list[tuple[str, Builder]]:
-    out: list[tuple[str, Builder]] = [("hero", hero_doc), ("stack", stack.build), ("footer", chrome.footer)]
+    out: list[tuple[str, Builder]] = [("hero", hero_doc), ("stack", stack.build)]
     out += [(f"sections/{s[0]}", chrome.section_builder(s)) for s in SECTIONS]
-    out += [(f"cards/{c.slug}", cards.card_builder(c, i)) for i, c in enumerate(CARDS)]
+    out += [(f"cards/{c.slug}", cards.card_builder(c)) for c in CARDS]
     out += [(f"contact/{c[0]}", chrome.contact_builder(c)) for c in CONTACTS]
     return out
 
@@ -46,8 +48,8 @@ def jobs() -> list[tuple[str, Builder]]:
 def hero_doc(book: FontBook, pal: Palette) -> Doc:
     doc = Doc(book, pal, (hero.W, hero.H), (
         "Aaron Guo — Software Automation Controls Engineer",
-        "Animated HMI banner: name, role, status chips, and a one-line diagram where feeder 3 trips, "
-        "is acknowledged, and is restored."))
+        "Photo of Aaron Guo with his name, role, and status chips, next to an animated one-line electrical "
+        "diagram where feeder 3 trips, is acknowledged, and is restored."))
     hero.build(doc)
     return doc
 

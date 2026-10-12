@@ -114,12 +114,12 @@ CARDS: list[Card] = [
          f"{GITHUB}/capstone"),
 ]
 
-SECTIONS: list[tuple[str, str, str, str]] = [
-    # slug, index, title, right-hand tag
-    ("selected-work", "01", "SELECTED WORK", f"{len(CARDS)} ENTRIES"),
-    ("stack", "02", "TECHNICAL STACK", "{n} TAGS"),
-    ("telemetry", "03", "GITHUB TELEMETRY", "LIVE FEED"),
-    ("connect", "04", "CONNECT", "3 CHANNELS"),
+SECTIONS: list[tuple[str, str]] = [
+    # slug, title
+    ("selected-work", "SELECTED WORK"),
+    ("stack", "TECHNICAL STACK"),
+    ("github-stats", "GITHUB STATS"),
+    ("contact", "CONTACT"),
 ]
 
 CONTACTS: list[tuple[str, str, str, str]] = [

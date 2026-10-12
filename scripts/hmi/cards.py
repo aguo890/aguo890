@@ -11,7 +11,6 @@ from .svgdoc import Doc, FontBook, Palette, num, step_keyframes
 CW, CH = 600, 340
 PAD = 24
 VX, VY, VW, VH = PAD, 164, CW - 2 * PAD, 124
-LED_BY_KIND = {"internal": "mu", "private": "gn", "public": "cy"}
 FOOTER_NOTE = {"plant-data-reliability": "6 tools · one summer"}
 BASE_CSS = (
     ".pulse{animation:pulse 2.4s ease-in-out infinite}@keyframes pulse{50%{opacity:.3}}"
@@ -20,31 +19,25 @@ BASE_CSS = (
 )
 
 
-def card_builder(card: Card, index: int) -> Callable[[FontBook, Palette], Doc]:
+def card_builder(card: Card) -> Callable[[FontBook, Palette], Doc]:
     def build(book: FontBook, pal: Palette) -> Doc:
         doc = Doc(book, pal, (CW, CH), (card.title, card.alt))
         doc.style("base", BASE_CSS)
-        _frame(doc, card, index)
+        _frame(doc, card)
         VISUALS[card.slug](doc)
         return doc
 
     return build
 
 
-def _frame(doc: Doc, card: Card, index: int) -> None:
+def _frame(doc: Doc, card: Card) -> None:
     p = doc.pal
-    led = getattr(p, LED_BY_KIND[card.kind])
-    pulse = ' class="pulse"' if card.kind != "internal" else ""
+    tag_w = doc.tw(card.tag, "m4", 16, 0.5) + 24
     doc.add(
         f'<rect x="1" y="1" width="{CW - 2}" height="{CH - 2}" rx="6" {doc.panel(1.2)}/>',
         _brackets(doc),
-        f'<circle{pulse} cx="{PAD + 6}" cy="31" r="5" fill="{led}"{doc.glow(3) if pulse else ""}/>',
-        doc.text(PAD + 20, 37, f"P-{index + 1:02d}", "m7", 16, p.mu, ls=1),
-    )
-    tag_w = doc.tw(card.tag, "m4", 16, 0.5) + 24
-    doc.add(
-        f'<rect x="{num(CW - PAD - tag_w)}" y="17" width="{num(tag_w)}" height="27" rx="4" {doc.panel(2)}/>',
-        doc.text(CW - PAD - tag_w / 2, 36, card.tag, "m4", 16, p.mu, "middle", 0.5),
+        f'<rect x="{PAD}" y="17" width="{num(tag_w)}" height="27" rx="4" {doc.panel(2)}/>',
+        doc.text(PAD + tag_w / 2, 36, card.tag, "m4", 16, p.mu, "middle", 0.5),
         doc.text(PAD, 92, card.title, "i6", 30, p.tx, ls=-0.3),
     )
     for i, line in enumerate(_wrap(doc, card.blurb, "i4", 18, VW)):
@@ -151,7 +144,7 @@ def _relay_readout(doc: Doc) -> None:
     )
 
 
-AGENT_NODES = ["AGENT", "MCP", "SANDBOX GW", "VISUAL CHECK", "HUMAN PROMOTE", "PROD"]
+AGENT_NODES = ["AGENT", "MCP", "SANDBOX", "VISUAL CHECK", "HUMAN REVIEW", "PROD"]
 AGENT_GRID = [(0, 0), (1, 0), (2, 0), (2, 1), (1, 1), (0, 1)]
 AGENT_STEP_S, AGENT_DWELL_S = 1.5, 0.85
 
@@ -298,21 +291,19 @@ def _fabrik(doc: Doc) -> None:
 def _andon(doc: Doc, x0: float) -> None:
     p = doc.pal
     w = VX + VW - x0
-    doc.add(
-        f'<rect x="{num(x0)}" y="{VY + 2}" width="{num(w)}" height="{VH - 4}" rx="6" {doc.panel(2.5)}/>',
-        doc.text(x0 + 16, VY + 26, "ANDON · TV", "m4", 15, p.mu, ls=0.5),
-        f'<rect class="pulse" x="{num(x0 + 16)}" y="{VY + 38}" width="5" height="30" rx="2" fill="{p.gn}"'
-        f'{doc.glow(3)}/>',
-        doc.text(x0 + 30, VY + 65, "RUN", "m7", 32, p.gn, ls=2),
-        doc.text(x0 + 16, VY + 92, "100 pages", "m4", 15, p.tx),
-        doc.text(x0 + 16, VY + 112, "5,300+ tests", "m4", 15, p.tx),
-    )
+    doc.add(f'<rect x="{num(x0)}" y="{VY + 2}" width="{num(w)}" height="{VH - 4}" rx="6" {doc.panel(2.5)}/>')
+    for i, (value, unit) in enumerate([("100", "pages"), ("5,300+", "tests")]):
+        y = VY + 50 + i * 46
+        doc.add(
+            doc.text(x0 + 16, y, value, "m7", 26, p.tx),
+            doc.text(x0 + 22 + doc.tw(value, "m7", 26), y, unit, "m4", 15, p.mu),
+        )
 
 
 def _job_pipeline(doc: Doc) -> None:
     p = doc.pal
     cols = [VX, VX + 196, VX + 404]
-    for x, label in zip(cols, ["01 SCRAPE", "02 RANK", "03 PDF"]):
+    for x, label in zip(cols, ["SCRAPE", "RANK", "PDF"]):
         doc.add(doc.text(x, VY + 12, label, "m7", 15, p.mu, ls=1))
     srcs = ["Greenhouse", "Lever", "Ashby"]
     sw = 138
